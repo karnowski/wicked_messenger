@@ -1,0 +1,123 @@
+ErrorMessageSifter
+==================
+
+Introduction goes here.
+
+
+Example
+=======
+
+Example goes here.
+
+
+Copyright (c) 2008 [name of plugin creator], released under the MIT license
+
+=========================================================================================================
+
+Input:
+-------------------------------------------------------
+5 errors prohibited this from being saved
+
+There were problems with the following fields:
+
+    * Invitee email must match an existing company's domain
+    * Invitee is invalid
+    * You can only invite users from your company
+    * User requires either a vendor or a corporation
+    * Email is not a valid e-mail address
+-------------------------------------------------------
+
+Desired output:
+-------------------------------------------------------
+An error prohibited this from being saved:
+    * Email is not a valid e-mail address
+-------------------------------------------------------
+
+Input:
+-------------------------------------------------------
+4 errors prohibited this from being saved
+
+There were problems with the following fields:
+
+    * Invitee email must match an existing company's domain
+    * Invitee is invalid
+    * You can only invite users from your company
+    * User requires either a vendor or a corporation
+-------------------------------------------------------
+
+Desired output:
+-------------------------------------------------------
+An error prohibited this from being saved:
+    * You can only invite users from your company
+-------------------------------------------------------
+
+Solution rules:
+<% 
+  error_messages_for :company_invitation, :user do 
+    suppress :company_invitation, :invitee, :invalid
+    suppress :user, :base, "User requires either a vendor or a corporation"
+
+    only_invite_from_own_company = error(:company_invitation, :base, "You can only invite users from your company")
+    invalid_email_address = error(:user, :email, "is not a valid e-mail address")
+    known_company_domain = error(:company_invitation, :invitee_email, "must match an existing company's domain")
+
+    invalid_email_address.trumps only_invite_from_own_company
+    only_invite_from_own_company.trumps known_company_domain
+
+    invalid_email_address << only_invite_from_own_company
+    only_invite_from_own_company << known_company_domain
+    
+    map :user, :base, "some really, really bad error message", "A much nicer message that includes #{@some_local_variable}."
+  end
+%>
+=========================================================================================================
+
+
+
+=========================================================================================================
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+== only one model lets us not specify the model prefix on each error rule ==
+<% 
+  error_messages_for :company_invitation do 
+    #suppress :invitee, "is invalid"
+    suppress :invitee, :invalid
+    ??? :invitee_email, "must match an existing company's domain"
+    important :base, "You can only invite users from your company"
+  end
+%>
+
+
+
+=========================================================================================================
+From ActiveRecord's Validations API:
+    @@default_error_messages = {
+      :inclusion => "is not included in the list",
+      :exclusion => "is reserved",
+      :invalid => "is invalid",
+      :confirmation => "doesn't match confirmation",
+      :accepted  => "must be accepted",
+      :empty => "can't be empty",
+      :blank => "can't be blank",
+      :too_long => "is too long (maximum is %d characters)",
+      :too_short => "is too short (minimum is %d characters)",
+      :wrong_length => "is the wrong length (should be %d characters)",
+      :taken => "has already been taken",
+      :not_a_number => "is not a number",
+      :greater_than => "must be greater than %d",
+      :greater_than_or_equal_to => "must be greater than or equal to %d",
+      :equal_to => "must be equal to %d",
+      :less_than => "must be less than %d",
+      :less_than_or_equal_to => "must be less than or equal to %d",
+      :odd => "must be odd",
+      :even => "must be even"
+    }
+

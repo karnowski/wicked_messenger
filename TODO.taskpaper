@@ -1,0 +1,32 @@
+Better  Rails error messages:
+- allow whitelist/blacklist
+- allow to create error codes instead of messages
+- allow view to choose better messages for each error code based ont he context
+- (remember the fifth rail story #636 where this came from; remember bubbling up error messages and removing the "user vendor/corp" message)
+- look at PI's and Fizmo's flash/error messages class/registry (per Jason & Rob)
+- change to not always prepend the attribute name
+- allow adding/removing of error messages very easily
+- allow error messages on any object, esp non ActiveRecord ones
+	- support Jay Fields' "validatable" plugin/gem
+- per bigfleet: have a stand-alone gem as well as rails plugin, to handle stand-alone activerecord apps
+- brainstorm a DSL @done
+- create a README @done
+- create a rails plugin directory structure @done
+- create a temporary dir/file in lib (so it'll be reloaded)  @done
+- write a framework that let's be me build a DSL in the future @done
+	- should monkey-patch error_messages_for @done
+	- if called without a block, call the old error_messages_for @done
+
+- break the modules up so there is one for base functionality and one for Rails-extensions like error_messsages_for?
+	- this might also let me remove the fake "alias_method_chain" in the tests?
+
+- find a safer/better way to handle the safe_erb conflict without manually calling "untaint" on the output from the base error_messages_for?
+- handle all the normal options for error_messages_for
+	 - header_tag - Used for the header of the error div (default: h2)
+	- id - The id of the error div (default: errorExplanation)
+	- class - The class of the error div (default: errorExplanation)
+	- object - The object (or array of objects) for which to display errors, if you need to escape the instance variable convention
+	- object_name - The object name to use in the header, or any text that you prefer. If object_name is not set, the name of the first object will be used.
+	- header_message - The message in the header of the error div. Pass nil or an empty string to avoid the header message altogether. (default: X errors prohibited this object from being saved)
+	- message - The explanation message after the header message and before the error list. Pass nil or an empty string to avoid the explanation message altogether. (default: There were problems with the following fields:)
+- override the default error_message_on method too?
