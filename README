@@ -56,13 +56,14 @@ Solution rules:
   error_messages_for :company_invitation, :user do 
     suppress :company_invitation, :invitee, :invalid
     suppress :user, :base, "User requires either a vendor or a corporation"
+    #suppress :user, :base, /either a vendor or a corporation/
 
     only_invite_from_own_company = error(:company_invitation, :base, "You can only invite users from your company")
     invalid_email_address = error(:user, :email, "is not a valid e-mail address")
     known_company_domain = error(:company_invitation, :invitee_email, "must match an existing company's domain")
 
-    invalid_email_address.trumps only_invite_from_own_company
-    only_invite_from_own_company.trumps known_company_domain
+    # invalid_email_address.trumps only_invite_from_own_company
+    # only_invite_from_own_company.trumps known_company_domain
 
     invalid_email_address << only_invite_from_own_company
     only_invite_from_own_company << known_company_domain
@@ -72,6 +73,9 @@ Solution rules:
 %>
 =========================================================================================================
 
+validates_each :email do
+  self.errors.add(:email,  Error.new(:only_invite_from_own_company, "hey dude, you can't invite from people"))
+end
 
 
 =========================================================================================================
