@@ -10,6 +10,11 @@ Example
 Example goes here.
 
 
+Requires
+========
+ActiveSupport
+
+
 Copyright (c) 2008 Relevance, Inc., released under the MIT license
 
 =========================================================================================================

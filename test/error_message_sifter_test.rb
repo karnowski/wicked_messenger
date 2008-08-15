@@ -14,56 +14,80 @@ describe "overridden error_messages_for" do
     error_messages_for_with_humanized_error_messages(:options) {}
   end
   
-  it "training wheels: TEMPORARILY ignores the last argument passed in, if it's a hash" do
+  it "successfully outputs html for the given errors (also temporarily ignores the last argument passed in, if it's a hash)" do
     errors_1 = [
-      ["field_1", "was invalid"], 
-      ["field_2", "was really bad, way bad"],
+      ["field_1", "is invalid"], 
+      ["field_2", "is really bad, way bad"],
     ]
     errors_2 = [
       ["base", ["completely wrong, dude.", "I said completely wrong.  Totally."]],
-      ["raisin", "was gotten above of"],
+      ["raisin", "is gotten above of"],
     ]
     
     @instance_variable_1 = stub(:errors => errors_1)
     @instance_variable_2 = stub(:errors => errors_2)
     
-    error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2", {:class => "something"}) {}.should == [
-      Error.new(:instance_variable_1, :field_1, "was invalid"),
-      Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
+    self.expects(:error_messages_html).with([
+      Error.new(:instance_variable_1, :field_1, "is invalid"),
+      Error.new(:instance_variable_1, :field_2, "is really bad, way bad"),
       Error.new(:instance_variable_2, :base, "completely wrong, dude."),
       Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
-      Error.new(:instance_variable_2, :raisin, "was gotten above of"),
-    ]
+      Error.new(:instance_variable_2, :raisin, "is gotten above of"),
+    ]).returns(:html_output)
+    
+    output = error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2", {:class => "something"}) {}
+    output.should == :html_output
   end
   
-  it "training wheels: can suppress" do
-    @instance_variable = stub(:errors => [["field_1", "was invalid"], ["field_2", "was really bad, way bad"]])
-    
+  it "evaluates the block of rules over the list of errors" do
+    @instance_variable = stub(:errors => [["field_1", "is invalid"], ["field_2", "is really bad, way bad"]])
+    self.expects(:error_messages_html).with([Error.new(:instance_variable, :field_2, "is really bad, way bad")])
+        
     output_errors = error_messages_for_with_humanized_error_messages(:instance_variable, {:class => "something"}) do
-      suppress :instance_variable, :field_1, "was invalid"
+      suppress :instance_variable, :field_1, "is invalid"
     end
-    
-    output_errors.should == [Error.new(:instance_variable, :field_2, "was really bad, way bad")]
+  end
+end
+
+describe "outputing HTML for errors" do
+  it "outputs the standard 'error_messages_for' html for the given errors" do
+    html = <<HTML 
+<div id="errorExplanation">
+  <h2>2 errors prohibited this from being saved</h2>
+  <p>There were problems with the following fields:</p>
+  <ul>
+    <li>Company is invalid</li>
+    <li>Name can't be blank</li>
+  </ul>
+</div>
+HTML
+
+  errors = [
+    Error.new(:instance_variable, :company, "is invalid"), 
+    Error.new(:instance_variable, :name, "can't be blank"),
+  ]
+  
+  self.send(:error_messages_html, errors).should == html
   end
 end
 
 describe "finding errors from instance variables" do
   it "returns a list of errors that are on the named instance variables in the argument list" do
-    errors_1 = [["field_1", "was invalid"], ["field_2", "was really bad, way bad"]]
+    errors_1 = [["field_1", "is invalid"], ["field_2", "is really bad, way bad"]]
     errors_2 = [
       ["base", ["completely wrong, dude.", "I said completely wrong.  Totally."]],
-      ["raisin", "was gotten above of"],
+      ["raisin", "is gotten above of"],
     ]
     
     @instance_variable_1 = stub(:errors => errors_1)
     @instance_variable_2 = stub(:errors => errors_2)
     
     ErrorMessageSifter.errors_for(self, :instance_variable_1, "instance_variable_2").should == [
-      Error.new(:instance_variable_1, :field_1, "was invalid"),
-      Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
+      Error.new(:instance_variable_1, :field_1, "is invalid"),
+      Error.new(:instance_variable_1, :field_2, "is really bad, way bad"),
       Error.new(:instance_variable_2, :base, "completely wrong, dude."),
       Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
-      Error.new(:instance_variable_2, :raisin, "was gotten above of"),
+      Error.new(:instance_variable_2, :raisin, "is gotten above of"),
     ]
   end
   
@@ -85,11 +109,17 @@ describe "Sifter object" do
   end
 
   it "suppresses any errors that match the given instance variable, field, and string message" do
-    error1 = Error.new(:instance_variable_1, :field_1, "was invalid")
-    error2 = Error.new(:instance_variable_1, :field_2, "was really bad, way bad")
+    error1 = Error.new(:instance_variable_1, :field_1, "is invalid")
+    error2 = Error.new(:instance_variable_1, :field_2, "is really bad, way bad")
     sifter = Sifter.new([error1, error1, error2])
-    sifter.suppress :instance_variable_1, :field_1, "was invalid"
+    sifter.suppress :instance_variable_1, :field_1, "is invalid"
     sifter.errors.should == [error2]
+  end
+end
+
+describe "Error object" do
+  it "creates a human-readable error message by titleizing the field and appending the message (default Rails behavior)" do
+    Error.new(:instance_variable, :field, "is invalid").humanize.should == "Field is invalid"
   end
 end
 

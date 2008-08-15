@@ -1,3 +1,5 @@
+require "active_support"
+
 module ErrorMessageSifter
   class Error
     attr_reader :object, :field, :message
@@ -6,6 +8,10 @@ module ErrorMessageSifter
       @object = object
       @field = field
       @message = message
+    end
+    
+    def humanize
+      "#{field.to_s.titleize} #{message}"
     end
     
     def ==(other)
@@ -58,12 +64,29 @@ module ErrorMessageSifter
       sifter = Sifter.new(errors)
       sifter.instance_eval(&block)
       
-      sifter.errors
-      
       #send the list of errors to an output string
-      #return the output string
+      error_messages_html(errors)
     end
-  
+    
+    private 
+    
+    def error_messages_html(errors)
+      html = ""
+      html += %Q{<div id="errorExplanation">\n}
+      html += %Q{  <h2>#{errors.length} errors prohibited this from being saved</h2>\n}
+      html += %Q{  <p>There were problems with the following fields:</p>\n}
+      html += %Q{  <ul>\n}
+      
+      errors.each do |error|
+        html += %Q{    <li>#{h error.humanize}</li>\n}
+      end
+      
+      html += %Q{  </ul>\n}
+      html += %Q{</div>\n}
+      
+      html
+    end
+    
     def self.included(base)
       base.class_eval { alias_method_chain :error_messages_for, :humanized_error_messages }
     end    
