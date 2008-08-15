@@ -24,10 +24,14 @@ Better  Rails error messages:
 - handle all the normal options for error_messages_for
 	 - header_tag - Used for the header of the error div (default: h2)
 	- id - The id of the error div (default: errorExplanation)
-	- class - The class of the error div (default: errorExplanation)
+	- class - The class of the error div (default: errorExplanation) @done
 	- object - The object (or array of objects) for which to display errors, if you need to escape the instance variable convention
 	- object_name - The object name to use in the header, or any text that you prefer. If object_name is not set, the name of the first object will be used.
 	- header_message - The message in the header of the error div. Pass nil or an empty string to avoid the header message altogether. (default: X errors prohibited this object from being saved)
 	- message - The explanation message after the header message and before the error list. Pass nil or an empty string to avoid the explanation message altogether. (default: There were problems with the following fields:)
 - override the default error_message_on method too?
 - automatically expand the errors of any "validates_associated" invalid component objects
+- support trumping
+- support mapping one message to another
+- support adding additional messages
+- support passing an error object instead of just the (object, field, message) tuple as parameters to methods like suppress, trump, etc
