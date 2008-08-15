@@ -55,6 +55,11 @@ module ErrorMessageSifter
       errors = ErrorMessageSifter.errors_for(self, *ivar_descriptors)
       
       #run the block over the list of errors (if any)
+      sifter = Sifter.new(errors)
+      sifter.instance_eval(&block)
+      
+      sifter.errors
+      
       #send the list of errors to an output string
       #return the output string
     end

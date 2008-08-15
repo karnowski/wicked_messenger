@@ -1,6 +1,8 @@
 require 'test_helper'
 require 'set'
 
+# TODO: make sure to refactor/kill/do-something-with the "training wheel" tests
+
 describe "overridden error_messages_for" do
   it "passes through to the standard ActionView error_messages_for if no block given" do
     self.expects(:error_messages_for_without_humanized_error_messages).with(:options)
@@ -32,6 +34,16 @@ describe "overridden error_messages_for" do
       Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
       Error.new(:instance_variable_2, :raisin, "was gotten above of"),
     ]
+  end
+  
+  it "training wheels: can suppress" do
+    @instance_variable = stub(:errors => [["field_1", "was invalid"], ["field_2", "was really bad, way bad"]])
+    
+    output_errors = error_messages_for_with_humanized_error_messages(:instance_variable, {:class => "something"}) do
+      suppress :instance_variable, :field_1, "was invalid"
+    end
+    
+    output_errors.should == [Error.new(:instance_variable, :field_2, "was really bad, way bad")]
   end
 end
 
