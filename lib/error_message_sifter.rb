@@ -13,25 +13,17 @@ module ErrorMessageSifter
     end
   end
   
-  #TODO move this into a Rails-specific module
-  def error_messages_for_with_humanized_error_messages(*args, &block)
-    #TODO: why does safe_erb bitch unless I untaint this?  it works fine everywhere else?
-    return error_messages_for_without_humanized_error_messages(*args).untaint if block.nil?
-    
-    #get a list of errors from these objects
-    errors = errors_for(*args)
-    #run the block over the list of errors (if any)
-    #send the list of errors to an output string
-    #return the output string
+  class Sifter
+    def initialize(error_list)
+    end
   end
   
-  #TODO move this into a core module, not Rails-specific
-  def errors_for(*args)
-    objects = args.collect {|object_name| [object_name, instance_variable_get("@#{object_name}")] }
+  def self.errors_for(model, *args)
+    ivar_names_and_values = args.collect {|ivar_name| [ivar_name, model.instance_variable_get("@#{ivar_name}")] }
     errors = []
-    objects.each do |name, object|
-      unless object.nil?
-        object.errors.each do |field, message|
+    ivar_names_and_values.each do |name, value|
+      unless value.nil?
+        value.errors.each do |field, message|
           if message.respond_to?(:each)
             message.each {|single_message| errors << Error.new(name.to_sym, field.to_sym, single_message)}
           else
@@ -43,8 +35,26 @@ module ErrorMessageSifter
     errors
   end
   
-  def self.included(base)
-    base.class_eval { alias_method_chain :error_messages_for, :humanized_error_messages }
+  module ActionViewExtensions
+    def error_messages_for_with_humanized_error_messages(*args, &block)
+      #TODO: why does safe_erb bitch unless I untaint this?  it works fine everywhere else?
+      return error_messages_for_without_humanized_error_messages(*args).untaint if block.nil?
+    
+      #slice off the options for now:  TODO actually handle the ActionView options
+      ivar_descriptors = args
+      ivar_descriptors.slice!(-1) if ivar_descriptors.last.is_a?(Hash)
+      
+      #get a list of errors from these objects
+      errors = ErrorMessageSifter.errors_for(self, *ivar_descriptors)
+      
+      #run the block over the list of errors (if any)
+      #send the list of errors to an output string
+      #return the output string
+    end
+  
+    def self.included(base)
+      base.class_eval { alias_method_chain :error_messages_for, :humanized_error_messages }
+    end    
   end
 end
 

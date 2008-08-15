@@ -11,10 +11,8 @@ describe "overridden error_messages_for" do
     self.expects(:error_messages_for_without_humanized_error_messages).never
     error_messages_for_with_humanized_error_messages(:options) {}
   end
-end
-
-describe "finding errors from instance variables" do
-  it "training wheels" do
+  
+  it "training wheels: TEMPORARILY ignores the last argument passed in, if it's a hash" do
     errors_1 = [
       ["field_1", "was invalid"], 
       ["field_2", "was really bad, way bad"],
@@ -27,15 +25,17 @@ describe "finding errors from instance variables" do
     @instance_variable_1 = stub(:errors => errors_1)
     @instance_variable_2 = stub(:errors => errors_2)
     
-    error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2") {}.should == [
-      ErrorMessageSifter::Error.new(:instance_variable_1, :field_1, "was invalid"),
-      ErrorMessageSifter::Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :base, "completely wrong, dude."),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :raisin, "was gotten above of"),
+    error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2", {:class => "something"}) {}.should == [
+      Error.new(:instance_variable_1, :field_1, "was invalid"),
+      Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
+      Error.new(:instance_variable_2, :base, "completely wrong, dude."),
+      Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
+      Error.new(:instance_variable_2, :raisin, "was gotten above of"),
     ]
   end
-  
+end
+
+describe "finding errors from instance variables" do
   it "returns a list of errors that are on the named instance variables in the argument list" do
     errors_1 = [["field_1", "was invalid"], ["field_2", "was really bad, way bad"]]
     errors_2 = [
@@ -46,12 +46,12 @@ describe "finding errors from instance variables" do
     @instance_variable_1 = stub(:errors => errors_1)
     @instance_variable_2 = stub(:errors => errors_2)
     
-    errors_for(:instance_variable_1, "instance_variable_2").should == [
-      ErrorMessageSifter::Error.new(:instance_variable_1, :field_1, "was invalid"),
-      ErrorMessageSifter::Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :base, "completely wrong, dude."),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
-      ErrorMessageSifter::Error.new(:instance_variable_2, :raisin, "was gotten above of"),
+    ErrorMessageSifter.errors_for(self, :instance_variable_1, "instance_variable_2").should == [
+      Error.new(:instance_variable_1, :field_1, "was invalid"),
+      Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),
+      Error.new(:instance_variable_2, :base, "completely wrong, dude."),
+      Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
+      Error.new(:instance_variable_2, :raisin, "was gotten above of"),
     ]
   end
   
@@ -59,22 +59,31 @@ describe "finding errors from instance variables" do
     @instance_variable_1 = stub(:errors => [])
     @instance_variable_2 = stub(:errors => [])
     
-    errors_for(:instance_variable_1, "instance_variable_2").should == []
+    ErrorMessageSifter.errors_for(:instance_variable_1, "instance_variable_2").should == []
   end
   
   it "handles the case where the instance variables named do not exists" do
-    errors_for(:instance_variable_1, "instance_variable_2").should == []
+    ErrorMessageSifter.errors_for(:instance_variable_1, "instance_variable_2").should == []
+  end
+end
+
+describe "suppressing error messages" do
+  xit "removes any errors that match the instance variable, field, and string message" do
+    # Sifter.new()
+    # [
+    #   Error.new(:instance_variable_1, :field_1, "was invalid"),
+    #   Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),    
   end
 end
 
 describe "Error equality" do
   it "two Error objects with the same instance variables are considered equal" do
-    ErrorMessageSifter::Error.new(:object, :field, "message").should == ErrorMessageSifter::Error.new(:object, :field, "message")
+    Error.new(:object, :field, "message").should == Error.new(:object, :field, "message")
   end
   
   it "two Error objects with any different in their instance variables are considered unequal" do
-    ErrorMessageSifter::Error.new(:object, :field, "message").should.not == ErrorMessageSifter::Error.new(:different_object, :field, "message")
-    ErrorMessageSifter::Error.new(:object, :field, "message").should.not == ErrorMessageSifter::Error.new(:object, :different_field, "message")
-    ErrorMessageSifter::Error.new(:object, :field, "message").should.not == ErrorMessageSifter::Error.new(:object, :field, "different message")
+    Error.new(:object, :field, "message").should.not == Error.new(:different_object, :field, "message")
+    Error.new(:object, :field, "message").should.not == Error.new(:object, :different_field, "message")
+    Error.new(:object, :field, "message").should.not == Error.new(:object, :field, "different message")
   end
 end

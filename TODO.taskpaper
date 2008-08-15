@@ -17,8 +17,8 @@ Better  Rails error messages:
 	- should monkey-patch error_messages_for @done
 	- if called without a block, call the old error_messages_for @done
 
-- break the modules up so there is one for base functionality and one for Rails-extensions like error_messsages_for?
-	- this might also let me remove the fake "alias_method_chain" in the tests?
+- break the modules up so there is one for base functionality and one for Rails-extensions like error_messsages_for? @done
+	- this might also let me remove the fake "alias_method_chain" in the tests? @done
 
 - find a safer/better way to handle the safe_erb conflict without manually calling "untaint" on the output from the base error_messages_for?
 - handle all the normal options for error_messages_for
@@ -30,3 +30,4 @@ Better  Rails error messages:
 	- header_message - The message in the header of the error div. Pass nil or an empty string to avoid the header message altogether. (default: X errors prohibited this object from being saved)
 	- message - The explanation message after the header message and before the error list. Pass nil or an empty string to avoid the explanation message altogether. (default: There were problems with the following fields:)
 - override the default error_message_on method too?
+- automatically expand the errors of any "validates_associated" invalid component objects
