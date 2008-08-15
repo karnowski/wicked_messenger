@@ -1,8 +1,6 @@
 require 'test_helper'
 require 'set'
 
-# TODO: make sure to refactor/kill/do-something-with the "training wheel" tests
-
 describe "overridden error_messages_for" do
   it "passes through to the standard ActionView error_messages_for if no block given" do
     self.expects(:error_messages_for_without_humanized_error_messages).with(:options)
@@ -14,7 +12,7 @@ describe "overridden error_messages_for" do
     error_messages_for_with_humanized_error_messages(:options) {}
   end
   
-  it "successfully outputs html for the given errors (also temporarily ignores the last argument passed in, if it's a hash)" do
+  it "successfully outputs html for the given errors" do
     errors_1 = [
       ["field_1", "is invalid"], 
       ["field_2", "is really bad, way bad"],
@@ -33,17 +31,17 @@ describe "overridden error_messages_for" do
       Error.new(:instance_variable_2, :base, "completely wrong, dude."),
       Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
       Error.new(:instance_variable_2, :raisin, "is gotten above of"),
-    ]).returns(:html_output)
+    ], {:class => "some_css_class"}).returns(:html_output)
     
-    output = error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2", {:class => "something"}) {}
+    output = error_messages_for_with_humanized_error_messages(:instance_variable_1, "instance_variable_2", {:class => "some_css_class"}) {}
     output.should == :html_output
   end
   
   it "evaluates the block of rules over the list of errors" do
     @instance_variable = stub(:errors => [["field_1", "is invalid"], ["field_2", "is really bad, way bad"]])
-    self.expects(:error_messages_html).with([Error.new(:instance_variable, :field_2, "is really bad, way bad")])
+    self.expects(:error_messages_html).with([Error.new(:instance_variable, :field_2, "is really bad, way bad")], anything)
         
-    output_errors = error_messages_for_with_humanized_error_messages(:instance_variable, {:class => "something"}) do
+    output_errors = error_messages_for_with_humanized_error_messages(:instance_variable) do
       suppress :instance_variable, :field_1, "is invalid"
     end
   end
@@ -68,6 +66,11 @@ HTML
   ]
   
   self.send(:error_messages_html, errors).should == html
+  end
+  
+  it "returns an empty string if the errors list is empty or nil" do
+    self.send(:error_messages_html, []).should == ""
+    self.send(:error_messages_html, nil).should == ""
   end
 end
 

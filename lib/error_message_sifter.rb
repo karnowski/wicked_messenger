@@ -1,4 +1,5 @@
 require "active_support"
+require "erb"
 
 module ErrorMessageSifter
   class Error
@@ -53,9 +54,8 @@ module ErrorMessageSifter
       #TODO: why does safe_erb bitch unless I untaint this?  it works fine everywhere else?
       return error_messages_for_without_humanized_error_messages(*args).untaint if block.nil?
     
-      #slice off the options for now:  TODO actually handle the ActionView options
       ivar_descriptors = args
-      ivar_descriptors.slice!(-1) if ivar_descriptors.last.is_a?(Hash)
+      html_options = (ivar_descriptors.last.is_a?(Hash)) ? ivar_descriptors.slice!(-1) : {}
       
       #get a list of errors from these objects
       errors = ErrorMessageSifter.errors_for(self, *ivar_descriptors)
@@ -65,24 +65,27 @@ module ErrorMessageSifter
       sifter.instance_eval(&block)
       
       #send the list of errors to an output string
-      error_messages_html(errors)
+      error_messages_html(errors, html_options)
     end
     
     private 
     
-    def error_messages_html(errors)
+    def error_messages_html(errors, options={})
       html = ""
-      html += %Q{<div id="errorExplanation">\n}
-      html += %Q{  <h2>#{errors.length} errors prohibited this from being saved</h2>\n}
-      html += %Q{  <p>There were problems with the following fields:</p>\n}
-      html += %Q{  <ul>\n}
       
-      errors.each do |error|
-        html += %Q{    <li>#{h error.humanize}</li>\n}
+      unless errors.blank?
+        html += %Q{<div id="errorExplanation">\n}
+        html += %Q{  <h2>#{errors.length} errors prohibited this from being saved</h2>\n}
+        html += %Q{  <p>There were problems with the following fields:</p>\n}
+        html += %Q{  <ul>\n}
+      
+        errors.each do |error|
+          html += %Q{    <li>#{ERB::Util.h(error.humanize)}</li>\n}
+        end
+      
+        html += %Q{  </ul>\n}
+        html += %Q{</div>\n}
       end
-      
-      html += %Q{  </ul>\n}
-      html += %Q{</div>\n}
       
       html
     end
