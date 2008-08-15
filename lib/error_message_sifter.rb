@@ -14,7 +14,14 @@ module ErrorMessageSifter
   end
   
   class Sifter
-    def initialize(error_list)
+    attr_reader :errors
+    
+    def initialize(errors=[])
+      @errors = errors
+    end
+    
+    def suppress(object, field, message)
+      @errors.delete(Error.new(object, field, message))
     end
   end
   

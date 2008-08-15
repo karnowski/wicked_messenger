@@ -67,12 +67,19 @@ describe "finding errors from instance variables" do
   end
 end
 
-describe "suppressing error messages" do
-  xit "removes any errors that match the instance variable, field, and string message" do
-    # Sifter.new()
-    # [
-    #   Error.new(:instance_variable_1, :field_1, "was invalid"),
-    #   Error.new(:instance_variable_1, :field_2, "was really bad, way bad"),    
+describe "Sifter object" do
+  it "tracks a list of errors" do
+    Sifter.new(:some_errors).errors.should == :some_errors
+  end
+end
+
+describe "Sifter suppresses error messages" do
+  it "removes any errors that match the instance variable, field, and string message" do
+    error1 = Error.new(:instance_variable_1, :field_1, "was invalid")
+    error2 = Error.new(:instance_variable_1, :field_2, "was really bad, way bad")
+    sifter = Sifter.new([error1, error2])
+    sifter.suppress :instance_variable_1, :field_1, "was invalid"
+    sifter.errors.should == [error2]
   end
 end
 
