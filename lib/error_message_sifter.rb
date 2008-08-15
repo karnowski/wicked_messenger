@@ -74,7 +74,9 @@ module ErrorMessageSifter
       html = ""
       
       unless errors.blank?
-        html += %Q{<div id="errorExplanation">\n}
+        css_class_name = options[:class] || "errorExplanation"
+        
+        html += %Q{<div class="#{css_class_name}" id="errorExplanation">\n}
         html += %Q{  <h2>#{errors.length} errors prohibited this from being saved</h2>\n}
         html += %Q{  <p>There were problems with the following fields:</p>\n}
         html += %Q{  <ul>\n}

@@ -50,7 +50,7 @@ end
 describe "outputing HTML for errors" do
   it "outputs the standard 'error_messages_for' html for the given errors" do
     html = <<HTML 
-<div id="errorExplanation">
+<div class="errorExplanation" id="errorExplanation">
   <h2>2 errors prohibited this from being saved</h2>
   <p>There were problems with the following fields:</p>
   <ul>
@@ -60,17 +60,23 @@ describe "outputing HTML for errors" do
 </div>
 HTML
 
-  errors = [
-    Error.new(:instance_variable, :company, "is invalid"), 
-    Error.new(:instance_variable, :name, "can't be blank"),
-  ]
+    errors = [
+      Error.new(:instance_variable, :company, "is invalid"), 
+      Error.new(:instance_variable, :name, "can't be blank"),
+    ]
   
-  self.send(:error_messages_html, errors).should == html
+    self.send(:error_messages_html, errors).should == html
   end
   
   it "returns an empty string if the errors list is empty or nil" do
     self.send(:error_messages_html, []).should == ""
     self.send(:error_messages_html, nil).should == ""
+  end
+  
+  it "allows for the 'class' (CSS class name) HTML option" do
+    errors = [Error.new(:instance_variable, :company, "is invalid")]
+    html = self.send(:error_messages_html, errors, :class => "some css class")
+    html.should.include('<div class="some css class" id="errorExplanation">')
   end
 end
 
