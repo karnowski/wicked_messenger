@@ -34,7 +34,7 @@ Better  Rails error messages:
 - support adding additional messages
 - support passing an error object instead of just the (object, field, message) tuple as parameters to methods like suppress, trump, etc
 - handle f.errors (when f is a form object)
-
+- change the name of the plugin... "wicked messenger"?  not sure
 Object model changes:
 - make an ActiveRecord::Observer-like pattern:
 	- example, say someone has a UsersController, if they make a UsersErrorFilter object, than we'll use it to filter the error messages
