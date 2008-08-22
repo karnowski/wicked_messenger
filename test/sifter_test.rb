@@ -27,7 +27,25 @@ describe "Sifter#suppress" do
     sifter.suppress(error1)
     sifter.errors.should == [error2]
   end
-end  
+end
+
+describe "Sifter#add" do
+  it "appends a new error to the list" do
+    error1 = Error.new(:instance_variable_1, :field_1, "is invalid")
+    error2 = Error.new(:instance_variable_1, :field_2, "is really bad, way bad")
+    sifter = Sifter.new([error1])
+    sifter.add(error2)
+    sifter.errors.should == [error1, error2]
+  end
+  
+  it "appends a new error to the list wrappering the given object, field, and message" do
+    error1 = Error.new(:instance_variable_1, :field_1, "is invalid")
+    error2 = Error.new(:instance_variable_1, :field_2, "is really bad, way bad")
+    sifter = Sifter.new([error1])
+    sifter.add(:instance_variable_1, :field_2, "is really bad, way bad")
+    sifter.errors.should == [error1, error2]
+  end
+end
 
 describe "Sifter#has_error" do
   #TODO: what about suppressed messages?

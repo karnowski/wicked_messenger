@@ -15,6 +15,10 @@ module ErrorMessageSifter
       @errors.delete(error)
     end
     
+    def add(*arguments)
+      @errors << error_from_arguments(arguments)
+    end
+    
     def has_error(*arguments)
       error = error_from_arguments(arguments)
       @errors.include?(error)
