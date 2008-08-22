@@ -31,12 +31,27 @@ module ErrorMessageSifter
       @errors = errors
     end
     
-    def suppress(object, field, message)
-      @errors.delete(Error.new(object, field, message))
+    def error(object, field, message)
+      Error.new(object, field, message)
     end
     
-    def has_error(object, field, message)
-      @errors.include?(Error.new(object, field, message))
+    def suppress(*arguments)
+      error = error_from_arguments(arguments)
+      @errors.delete(error)
+    end
+    
+    def has_error(*arguments)
+      error = error_from_arguments(arguments)
+      @errors.include?(error)
+    end
+    
+    private
+    
+    def error_from_arguments(arguments)
+      return nil if arguments == nil
+      return arguments[0] if arguments[0].is_a?(Error)
+      raise "wrong number of arguments (requires object, field, and message)" unless arguments.length == 3
+      Error.new(arguments[0], arguments[1], arguments[2])
     end
   end
   
@@ -85,7 +100,7 @@ module ErrorMessageSifter
         css_class_name = options[:class] || "errorExplanation"
         
         html += %Q{<div class="#{css_class_name}" id="errorExplanation">\n}
-        html += %Q{  <h2>#{errors.length} errors prohibited this from being saved</h2>\n}
+        html += %Q{  <h2>#{pluralize(errors.length, 'error')} prohibited this from being saved</h2>\n}
         html += %Q{  <p>There were problems with the following fields:</p>\n}
         html += %Q{  <ul>\n}
       

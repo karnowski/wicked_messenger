@@ -1,9 +1,7 @@
 Better  Rails error messages:
-- allow whitelist/blacklist
+- allow whitelist/blacklist @done
 - allow to create error codes instead of messages
 - allow view to choose better messages for each error code based ont he context
-- (remember the fifth rail story #636 where this came from; remember bubbling up error messages and removing the "user vendor/corp" message)
-- look at PI's and Fizmo's flash/error messages class/registry (per Jason & Rob)
 - change to not always prepend the attribute name
 - allow adding/removing of error messages very easily
 - allow error messages on any object, esp non ActiveRecord ones
