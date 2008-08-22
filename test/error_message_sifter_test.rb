@@ -85,7 +85,7 @@ describe "finding errors from instance variables" do
     errors_1 = [["field_1", "is invalid"], ["field_2", "is really bad, way bad"]]
     errors_2 = [
       ["base", ["completely wrong, dude.", "I said completely wrong.  Totally."]],
-      ["raisin", "is gotten above of"],
+      ["raisin", "was gotten above of"],
     ]
     
     @instance_variable_1 = stub(:errors => errors_1)
@@ -96,7 +96,7 @@ describe "finding errors from instance variables" do
       Error.new(:instance_variable_1, :field_2, "is really bad, way bad"),
       Error.new(:instance_variable_2, :base, "completely wrong, dude."),
       Error.new(:instance_variable_2, :base, "I said completely wrong.  Totally."),
-      Error.new(:instance_variable_2, :raisin, "is gotten above of"),
+      Error.new(:instance_variable_2, :raisin, "was gotten above of"),
     ]
   end
   
@@ -124,11 +124,28 @@ describe "Sifter object" do
     sifter.suppress :instance_variable_1, :field_1, "is invalid"
     sifter.errors.should == [error2]
   end
+  
+  #TODO: what about suppressed messages?
+  it "has_error returns true if the given error is present" do
+    error = Error.new(:instance_variable, :field, "is invalid")
+    sifter = Sifter.new([error])
+    sifter.has_error(:instance_variable, :field, "is invalid").should == true
+  end
+  
+  it "has_error returns false if the given error is not present" do
+    sifter = Sifter.new([])
+    sifter.has_error(:instance_variable, :field, "is invalid").should == false
+  end
 end
 
 describe "Error object" do
   it "creates a human-readable error message by titleizing the field and appending the message (default Rails behavior)" do
     Error.new(:instance_variable, :field, "is invalid").humanize.should == "Field is invalid"
+  end
+  
+  it "drops the field name if the field is 'base' or :base" do
+    Error.new(:instance_variable, :base,  "A stand-alone message").humanize.should == "A stand-alone message"
+    Error.new(:instance_variable, "base", "A stand-alone message").humanize.should == "A stand-alone message"    
   end
 end
 

@@ -12,7 +12,11 @@ module ErrorMessageSifter
     end
     
     def humanize
-      "#{field.to_s.titleize} #{message}"
+      if field.to_s == "base"
+        "#{message}"
+      else        
+        "#{field.to_s.titleize} #{message}"
+      end
     end
     
     def ==(other)
@@ -29,6 +33,10 @@ module ErrorMessageSifter
     
     def suppress(object, field, message)
       @errors.delete(Error.new(object, field, message))
+    end
+    
+    def has_error(object, field, message)
+      @errors.include?(Error.new(object, field, message))
     end
   end
   
