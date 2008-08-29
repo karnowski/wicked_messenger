@@ -29,7 +29,7 @@ Better  Rails error messages:
 	- message - The explanation message after the header message and before the error list. Pass nil or an empty string to avoid the explanation message altogether. (default: There were problems with the following fields:)
 - override the default error_message_on method too?
 - automatically expand the errors of any "validates_associated" invalid component objects
-- support trumping
+- support trumping @done
 - support replacing the output of an error message @done
 - support adding additional messages @done
 - support passing an error object instead of just the (object, field, message) tuple as parameters to methods like suppress, trump, etc @done

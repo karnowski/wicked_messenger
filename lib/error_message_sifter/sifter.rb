@@ -33,6 +33,17 @@ module ErrorMessageSifter
       matching_errors.each {|e| e.overridden_message = new_message }
     end
     
+    def trump(*arguments)
+      options = arguments[-1].is_a?(Hash) ? arguments.slice!(-1) : {}
+      inferior_errors = options[:over] || return
+      inferior_errors = [inferior_errors] unless inferior_errors.is_a?(Array)
+      
+      superior_error = error_from_arguments(arguments)
+      inferior_errors.each do |inferior_error|
+        suppress inferior_error if has_error(superior_error)
+      end
+    end
+    
     private
     
     def error_from_arguments(arguments)

@@ -96,26 +96,14 @@ Solution rules:
     invalid_email_address = error(:user, :email, "is not a valid e-mail address")
     known_company_domain = error(:company_invitation, :invitee_email, "must match an existing company's domain")
 
-    # if has_error(:corporation, :subdomain, :blank) 
-    #   suppress :corporation, :subdomain, :already_taken
-    #   suppress :corporation, :subdomain, :special_characters
-    # end
+    #trump :company_invitation, :subdomain, "can't be blank"), :over => [:already_taken, :special_characters]
 
-    error(:company_invitation, :subdomain, "can't be blank").trumps :already_taken, :special_characters
-
-
-    error(:company_invitation, :base, "You can only invite users from your company").trumps error(:user, :email, "is not a valid e-mail address")
-    error(:company_invitation, :base, :invite_only_from_own_company).trumps error(:user, :email, :invalid_email)
-
-
-    # invalid_email_address.trumps only_invite_from_own_company
-    # only_invite_from_own_company.trumps known_company_domain
-    # 
-    # invalid_email_address << only_invite_from_own_company
-    # only_invite_from_own_company << known_company_domain
-    # 
-    # trump invalid_email_address, :over => only_invite_from_own_company
-    # trump only_invite_from_own_company, :over => known_company_domain
+    
+    trump :company_invitation, :base, "You can only invite users from your company", :over => error(:user, :email, "is not a valid e-mail address")
+    trump :company_invitation, :base, :invite_only_from_own_company, :over => error(:user, :email, :invalid_email)
+  
+    trump invalid_email_address, :over => only_invite_from_own_company
+    trump only_invite_from_own_company, :over => known_company_domain
     
     replace :user, :base, "some really, really bad error message", :with => "A much nicer message that includes #{@some_local_variable}."
     add :some_field, :silliness_level, "has been exceeded"
