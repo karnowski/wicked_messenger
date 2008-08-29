@@ -9,6 +9,12 @@ describe "Error#humanize" do
     Error.new(:instance_variable, :base,  "A stand-alone message").humanize.should == "A stand-alone message"
     Error.new(:instance_variable, "base", "A stand-alone message").humanize.should == "A stand-alone message"    
   end
+  
+  it "returns the overridden message if one exists" do
+    error = Error.new(:instance_variable, :field,  "is invalid")
+    error.overridden_message = "Message was overridden."
+    error.humanize.should == "Message was overridden."
+  end
 end
 
 describe "Error equality" do

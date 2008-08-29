@@ -1,6 +1,7 @@
 module ErrorMessageSifter
   class Error
     attr_reader :object, :field, :message
+    attr_accessor :overridden_message
     
     def initialize(object, field, message)
       @object = object
@@ -9,6 +10,8 @@ module ErrorMessageSifter
     end
     
     def humanize
+      return @overridden_message if @overridden_message
+      
       if field.to_s == "base"
         "#{message}"
       else        

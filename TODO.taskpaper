@@ -3,7 +3,7 @@ Better  Rails error messages:
 - allow to create error codes instead of messages
 - allow view to choose better messages for each error code based ont he context
 - change to not always prepend the attribute name
-- allow adding/removing of error messages very easily
+- allow adding/removing of error messages very easily @done
 - allow error messages on any object, esp non ActiveRecord ones
 	- support Jay Fields' "validatable" plugin/gem
 - per bigfleet: have a stand-alone gem as well as rails plugin, to handle stand-alone activerecord apps
@@ -30,9 +30,9 @@ Better  Rails error messages:
 - override the default error_message_on method too?
 - automatically expand the errors of any "validates_associated" invalid component objects
 - support trumping
-- support mapping one message to another
-- support adding additional messages
-- support passing an error object instead of just the (object, field, message) tuple as parameters to methods like suppress, trump, etc
+- support replacing the output of an error message @done
+- support adding additional messages @done
+- support passing an error object instead of just the (object, field, message) tuple as parameters to methods like suppress, trump, etc @done
 - handle f.errors (when f is a form object)
 - change the name of the plugin... "wicked messenger"?  not sure
 Object model changes:

@@ -24,6 +24,15 @@ module ErrorMessageSifter
       @errors.include?(error)
     end
     
+    def replace(*arguments)
+      options = arguments[-1].is_a?(Hash) ? arguments.slice!(-1) : {}
+      new_message = options[:with] || return
+      error_rule = error_from_arguments(arguments)
+      
+      matching_errors = @errors.select {|e| e == error_rule }
+      matching_errors.each {|e| e.overridden_message = new_message }
+    end
+    
     private
     
     def error_from_arguments(arguments)
