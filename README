@@ -1,3 +1,17 @@
+=========================================================
+DISCLAIMER:  Note this is a work in progress!
+We're letting it be open on github in hopes that it'll be
+useful to someone and we'll get some good ideas back.
+However, all bets are off when it comes to stability of
+the API and functionality.  
+
+(For example, I know I'm putting too much code in the view 
+right now, and I'm working on drastically changing that 
+in the next iteration.)
+
+Thanks! -- Larry 2008-09-05
+=========================================================
+
 ErrorMessageSifter
 ==================
 
