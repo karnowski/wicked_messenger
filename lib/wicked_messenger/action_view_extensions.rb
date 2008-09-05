@@ -1,6 +1,6 @@
 require "erb"
 
-module ErrorMessageSifter
+module WickedMessenger
   module ActionViewExtensions
     def error_messages_for_with_humanized_error_messages(*args, &block)
       #TODO: why does safe_erb bitch unless I untaint this?  it works fine everywhere else!
@@ -10,7 +10,7 @@ module ErrorMessageSifter
       html_options = (ivar_descriptors.last.is_a?(Hash)) ? ivar_descriptors.slice!(-1) : {}
       
       #get a list of errors from these objects
-      errors = ErrorMessageSifter.errors_for(self, *ivar_descriptors)
+      errors = WickedMessenger.errors_for(self, *ivar_descriptors)
       
       #run the block over the list of errors (if any)
       sifter = Sifter.new(errors)

@@ -5,17 +5,17 @@ require 'rake/rdoctask'
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test the error_message_sifter plugin.'
+desc 'Test the wicked_messenger plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib' << 'test'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = true
 end
 
-desc 'Generate documentation for the error_message_sifter plugin.'
+desc 'Generate documentation for the wicked_messenger plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'ErrorMessageSifter'
+  rdoc.title    = 'WickedMessenger'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')

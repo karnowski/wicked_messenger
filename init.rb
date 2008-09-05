@@ -1,3 +1,3 @@
-require 'error_message_sifter'
-require 'error_message_sifter/action_view_extensions'
-ActionView::Base.class_eval { include ErrorMessageSifter::ActionViewExtensions }
+require 'wicked_messenger'
+require 'wicked_messenger/action_view_extensions'
+ActionView::Base.class_eval { include WickedMessenger::ActionViewExtensions }

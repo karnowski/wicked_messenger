@@ -1,8 +1,8 @@
 require "active_support"
-require "error_message_sifter/error"
-require "error_message_sifter/sifter"
+require "wicked_messenger/error"
+require "wicked_messenger/sifter"
 
-module ErrorMessageSifter
+module WickedMessenger
   def self.errors_for(model, *args)
     ivar_names_and_values = args.collect {|ivar_name| [ivar_name, model.instance_variable_get("@#{ivar_name}")] }
     errors = []

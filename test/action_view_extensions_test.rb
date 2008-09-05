@@ -1,12 +1,12 @@
 require 'test_helper'
-require 'error_message_sifter/action_view_extensions'
+require 'wicked_messenger/action_view_extensions'
 
 class Test::Unit::TestCase
   def self.alias_method_chain(*args)
     #just here to make including the ActionViewExtensions work
   end
   
-  include ErrorMessageSifter::ActionViewExtensions
+  include WickedMessenger::ActionViewExtensions
 end
 
 describe "overridden error_messages_for" do

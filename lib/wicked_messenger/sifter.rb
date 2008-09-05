@@ -1,4 +1,4 @@
-module ErrorMessageSifter
+module WickedMessenger
   class Sifter
     attr_reader :errors
     

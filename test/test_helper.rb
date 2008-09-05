@@ -1,6 +1,6 @@
 require "rubygems"
 require 'test/spec'
 require 'mocha'
-require "error_message_sifter"
+require "wicked_messenger"
 
-include ErrorMessageSifter
+include WickedMessenger

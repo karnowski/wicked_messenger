@@ -1,4 +1,4 @@
-module ErrorMessageSifter
+module WickedMessenger
   class Error
     attr_reader :object, :field, :message
     attr_accessor :overridden_message
