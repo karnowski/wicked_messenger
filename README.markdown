@@ -45,7 +45,6 @@ See the NOTES file for more ideas how we would want to convert error messages.
 
 * ActiveSupport
 
-
 ## License
 
 Copyright (c) 2008 Relevance, Inc.
